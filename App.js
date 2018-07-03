@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableHighlight} from 'react-native';
+import {StyleSheet, Text, View, TouchableHighlight, Alert, ToastAndroid} from 'react-native';
 
 class Button extends React.Component {
 
@@ -25,9 +25,59 @@ export default class App extends React.Component {
     }
 
     addToCalcString = bttn => {
-        this.setState({
-            calcString: this.state.calcString + bttn
-        })
+        let calcStr = this.state.calcString;
+        if (bttn === '/' || bttn === 'X' || bttn === '-' || bttn === '+' || bttn === '.') {
+            if (calcStr.length === 0) {
+                ToastAndroid.showWithGravity('You have to input digits first',
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM);
+            } else if (calcStr[calcStr.length - 1] === '/' || calcStr[calcStr.length - 1] === 'X' ||
+                calcStr[calcStr.length - 1] === '-' || calcStr[calcStr.length - 1] === '+' ||
+                calcStr[calcStr.length - 1] === '.') {
+                ToastAndroid.showWithGravity("Doubled operation",
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM);
+            } else if (bttn === '.') {
+                let signIndexes = [
+                    {
+                        operation: '/',
+                        index: calcStr.lastIndexOf('/')
+                    },
+                    {
+                        operation: 'X',
+                        index: calcStr.lastIndexOf('X')
+                    },
+                    {
+                        operation: '-',
+                        index: calcStr.lastIndexOf('-')
+                    },
+                    {
+                        operation: '+',
+                        index: calcStr.lastIndexOf('+')
+                    }
+                ];
+
+                signIndexes.sort( ( a , b ) => b.index - a.index );
+                let toSearch = signIndexes[0].index;
+                if( calcStr.indexOf('.', toSearch) > (-1)){
+                    ToastAndroid.showWithGravity("You can't input another dot in the number",
+                        ToastAndroid.LONG,
+                        ToastAndroid.BOTTOM);
+                } else {
+                    this.setState({
+                        calcString: this.state.calcString + bttn
+                    })
+                }
+            } else {
+                this.setState({
+                    calcString: this.state.calcString + bttn
+                })
+            }
+        } else {
+            this.setState({
+                calcString: this.state.calcString + bttn
+            })
+        }
     };
 
     resetCalcString = bttn => {
@@ -42,6 +92,10 @@ export default class App extends React.Component {
         })
     };
 
+    notAddedyet = bttn => {
+        Alert.alert("Functionallity still in development");
+    };
+
     render() {
         return (
             <View style={styles.main}>
@@ -51,7 +105,7 @@ export default class App extends React.Component {
                 <View style={styles.buttonRow}>
                     <Button bttnValue="C" func={this.resetCalcString}/>
                     <Button bttnValue="DEL" func={this.deleteLastSign}/>
-                    <Button bttnValue="()"/>
+                    <Button bttnValue="()" func={this.notAddedyet}/>
                     <Button bttnValue="/" func={this.addToCalcString}/>
                 </View>
                 <View style={styles.buttonRow}>
@@ -73,10 +127,10 @@ export default class App extends React.Component {
                     <Button bttnValue="+" func={this.addToCalcString}/>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="+/-"/>
+                    <Button bttnValue="+/-" func={this.notAddedyet}/>
                     <Button bttnValue="0" func={this.addToCalcString}/>
                     <Button bttnValue="." func={this.addToCalcString}/>
-                    <Button bttnValue="="/>
+                    <Button bttnValue="=" func={this.notAddedyet}/>
                 </View>
             </View>
         )
