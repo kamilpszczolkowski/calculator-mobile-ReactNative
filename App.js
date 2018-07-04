@@ -111,7 +111,7 @@ export default class App extends React.Component {
                 ToastAndroid.BOTTOM);
         } else {
             while (tempCalcString.indexOf('X') > 0) {
-                let operation = tempCalcString.match(/\d+\.*\d*X\d+\.*\d*/);
+                let operation = tempCalcString.match(/-?\d+\.*\d*X\d+\.*\d*/);
                 let operationIndex = operation[0].indexOf('X');
                 let num1 = Number(operation[0].slice(0, operationIndex));
                 let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
@@ -120,8 +120,11 @@ export default class App extends React.Component {
                     tempCalcString.slice(operation.index + operation[0].length, tempCalcString.length);
                 tempCalcString = finalState;
             }
+
+
+
             while (tempCalcString.indexOf('/') > 0) {
-                let operation = tempCalcString.match(/\d+\.*\d*\/\d+\.*\d*/);
+                let operation = tempCalcString.match(/-?\d+\.*\d*\/\d+\.*\d*/);
                 let operationIndex = operation[0].indexOf('/');
                 let num1 = Number(operation[0].slice(0, operationIndex));
                 let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
@@ -132,7 +135,7 @@ export default class App extends React.Component {
             }
 
             while (tempCalcString.indexOf('+') > 0) {
-                let operation = tempCalcString.match(/\d+\.*\d*\+\d+\.*\d*/);
+                let operation = tempCalcString.match(/-?\d+\.*\d*\+\d+\.*\d*/);
                 let operationIndex = operation[0].indexOf('+');
                 let num1 = Number(operation[0].slice(0, operationIndex));
                 let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
@@ -142,9 +145,9 @@ export default class App extends React.Component {
                 tempCalcString = finalState;
             }
 
-            while (tempCalcString.indexOf('-') > 0) {
-                let operation = tempCalcString.match(/\d+\.*\d*\-\d+\.*\d*/);
-                let operationIndex = operation[0].indexOf('-');
+            while (tempCalcString.indexOf('-', 1) !== (-1) ) {
+                let operation = tempCalcString.match(/-?\d+\.*\d*-\d+\.*\d*/);
+                let operationIndex = operation[0].indexOf('-', 1);
                 let num1 = Number(operation[0].slice(0, operationIndex));
                 let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
                 let result = num1 - num2;
