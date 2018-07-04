@@ -92,10 +92,6 @@ export default class App extends React.Component {
         })
     };
 
-    notAddedyet = bttn => {
-        Alert.alert("Functionallity still in development");
-    };
-
     completeOperation = bttn => {
         let tempCalcString = this.state.calcString;
 
@@ -162,6 +158,23 @@ export default class App extends React.Component {
         }
     };
 
+    changeSign = bttn => {
+        if (this.state.calcString[0] === '-'){
+            let tempString = this.state.calcString.slice(1, this.state.calcString.length);
+            this.setState({
+                calcString: tempString
+            })
+        } else {
+            this.setState({
+                calcString: '-' + this.state.calcString
+            })
+        }
+    };
+
+    notAddedyet = bttn => {
+        Alert.alert("Functionallity still in development");
+    };
+
     render() {
         return (
             <View style={styles.main}>
@@ -193,7 +206,7 @@ export default class App extends React.Component {
                     <Button bttnValue="+" func={this.addToCalcString}/>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="+/-" func={this.notAddedyet}/>
+                    <Button bttnValue="+/-" func={this.changeSign}/>
                     <Button bttnValue="0" func={this.addToCalcString}/>
                     <Button bttnValue="." func={this.addToCalcString}/>
                     <Button bttnValue="=" func={this.completeOperation}/>
