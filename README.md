@@ -4,4 +4,12 @@ Basic calculator application for mobile devices.
 
 # Purpose
 
-I created this app to practice my new skills in React Native environment.
+The purpose of this application was to practice new skills in react-native environment:
+ * creating new application,
+ * developing the application,
+ * starting server with application, connecting to phone, hot-loading,
+ * debugging.
+ 
+# description
+
+Application looks like basic phone calculator - for basic operations. 
