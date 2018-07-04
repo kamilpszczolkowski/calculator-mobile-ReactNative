@@ -57,9 +57,9 @@ export default class App extends React.Component {
                     }
                 ];
 
-                signIndexes.sort( ( a , b ) => b.index - a.index );
+                signIndexes.sort((a, b) => b.index - a.index);
                 let toSearch = signIndexes[0].index;
-                if( calcStr.indexOf('.', toSearch) > (-1)){
+                if (calcStr.indexOf('.', toSearch) > (-1)) {
                     ToastAndroid.showWithGravity("You can't input another dot in the number",
                         ToastAndroid.LONG,
                         ToastAndroid.BOTTOM);
@@ -96,6 +96,69 @@ export default class App extends React.Component {
         Alert.alert("Functionallity still in development");
     };
 
+    completeOperation = bttn => {
+        let tempCalcString = this.state.calcString;
+
+        if (tempCalcString.length === 0) {
+            ToastAndroid.showWithGravity('No operation',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM);
+        } else if (tempCalcString[tempCalcString.length - 1] === '/' || tempCalcString[tempCalcString.length - 1] === 'X' ||
+            tempCalcString[tempCalcString.length - 1] === '-' || tempCalcString[tempCalcString.length - 1] === '+' ||
+            tempCalcString[tempCalcString.length - 1] === '.') {
+            ToastAndroid.showWithGravity("Digits missing",
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM);
+        } else {
+            while (tempCalcString.indexOf('X') > 0) {
+                let operation = tempCalcString.match(/\d+\.*\d*X\d+\.*\d*/);
+                let operationIndex = operation[0].indexOf('X');
+                let num1 = Number(operation[0].slice(0, operationIndex));
+                let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
+                let result = num1 * num2;
+                let finalState = tempCalcString.slice(0, operation.index) + result +
+                    tempCalcString.slice(operation.index + operation[0].length, tempCalcString.length);
+                tempCalcString = finalState;
+            }
+            while (tempCalcString.indexOf('/') > 0) {
+                let operation = tempCalcString.match(/\d+\.*\d*\/\d+\.*\d*/);
+                let operationIndex = operation[0].indexOf('/');
+                let num1 = Number(operation[0].slice(0, operationIndex));
+                let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
+                let result = num1 / num2;
+                let finalState = tempCalcString.slice(0, operation.index) + result +
+                    tempCalcString.slice(operation.index + operation[0].length, tempCalcString.length);
+                tempCalcString = finalState;
+            }
+
+            while (tempCalcString.indexOf('+') > 0) {
+                let operation = tempCalcString.match(/\d+\.*\d*\+\d+\.*\d*/);
+                let operationIndex = operation[0].indexOf('+');
+                let num1 = Number(operation[0].slice(0, operationIndex));
+                let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
+                let result = num1 + num2;
+                let finalState = tempCalcString.slice(0, operation.index) + result +
+                    tempCalcString.slice(operation.index + operation[0].length, tempCalcString.length);
+                tempCalcString = finalState;
+            }
+
+            while (tempCalcString.indexOf('-') > 0) {
+                let operation = tempCalcString.match(/\d+\.*\d*\-\d+\.*\d*/);
+                let operationIndex = operation[0].indexOf('-');
+                let num1 = Number(operation[0].slice(0, operationIndex));
+                let num2 = Number(operation[0].slice(operationIndex + 1, operation[0].length));
+                let result = num1 - num2;
+                let finalState = tempCalcString.slice(0, operation.index) + result +
+                    tempCalcString.slice(operation.index + operation[0].length, tempCalcString.length);
+                tempCalcString = finalState;
+            }
+
+            this.setState({
+                calcString: tempCalcString
+            })
+        }
+    };
+
     render() {
         return (
             <View style={styles.main}>
@@ -130,7 +193,7 @@ export default class App extends React.Component {
                     <Button bttnValue="+/-" func={this.notAddedyet}/>
                     <Button bttnValue="0" func={this.addToCalcString}/>
                     <Button bttnValue="." func={this.addToCalcString}/>
-                    <Button bttnValue="=" func={this.notAddedyet}/>
+                    <Button bttnValue="=" func={this.completeOperation}/>
                 </View>
             </View>
         )
