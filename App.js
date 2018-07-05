@@ -221,9 +221,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "black",
     },
-    text: {
-        color: "white",
-    },
     inputField: {
         marginTop: 30,
         flex: 3,
