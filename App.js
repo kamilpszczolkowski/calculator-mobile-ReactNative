@@ -9,8 +9,11 @@ class Button extends React.Component {
 
     render() {
         return (
-            <TouchableHighlight style={styles.calcButton} onPress={this.handleBttnPress} underlayColor="grey">
-                <Text style={styles.calcButtonText}>{this.props.bttnValue}</Text>
+            <TouchableHighlight style={this.props.buttonC ? styles.calcButtonC : styles.calcButton}
+                                onPress={this.handleBttnPress} underlayColor="grey">
+                <Text style={this.props.special ? styles.calcButtonTextSpec : styles.calcButtonText}>
+                    {this.props.bttnValue}
+                </Text>
             </TouchableHighlight>
         )
     }
@@ -26,43 +29,53 @@ export default class App extends React.Component {
 
     addToCalcString = bttn => {
         let calcStr = this.state.calcString;
-        if (bttn === '/' || bttn === 'X' || bttn === '-' || bttn === '+' || bttn === '.') {
-            if (calcStr.length === 0) {
-                ToastAndroid.showWithGravity('You have to input digits first',
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM);
-            } else if (calcStr[calcStr.length - 1] === '/' || calcStr[calcStr.length - 1] === 'X' ||
-                calcStr[calcStr.length - 1] === '-' || calcStr[calcStr.length - 1] === '+' ||
-                calcStr[calcStr.length - 1] === '.') {
-                ToastAndroid.showWithGravity("Doubled operation",
-                    ToastAndroid.LONG,
-                    ToastAndroid.BOTTOM);
-            } else if (bttn === '.') {
-                let signIndexes = [
-                    {
-                        operation: '/',
-                        index: calcStr.lastIndexOf('/')
-                    },
-                    {
-                        operation: 'X',
-                        index: calcStr.lastIndexOf('X')
-                    },
-                    {
-                        operation: '-',
-                        index: calcStr.lastIndexOf('-')
-                    },
-                    {
-                        operation: '+',
-                        index: calcStr.lastIndexOf('+')
-                    }
-                ];
-
-                signIndexes.sort((a, b) => b.index - a.index);
-                let toSearch = signIndexes[0].index;
-                if (calcStr.indexOf('.', toSearch) > (-1)) {
-                    ToastAndroid.showWithGravity("You can't input another dot in the number",
+        if (calcStr.length > 45) {
+            ToastAndroid.showWithGravity('Entered operation is too long',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM);
+        } else {
+            if (bttn === '/' || bttn === 'X' || bttn === '-' || bttn === '+' || bttn === '.') {
+                if (calcStr.length === 0) {
+                    ToastAndroid.showWithGravity('You have to input digits first',
                         ToastAndroid.LONG,
                         ToastAndroid.BOTTOM);
+                } else if (calcStr[calcStr.length - 1] === '/' || calcStr[calcStr.length - 1] === 'X' ||
+                    calcStr[calcStr.length - 1] === '-' || calcStr[calcStr.length - 1] === '+' ||
+                    calcStr[calcStr.length - 1] === '.') {
+                    ToastAndroid.showWithGravity("Doubled operation",
+                        ToastAndroid.LONG,
+                        ToastAndroid.BOTTOM);
+                } else if (bttn === '.') {
+                    let signIndexes = [
+                        {
+                            operation: '/',
+                            index: calcStr.lastIndexOf('/')
+                        },
+                        {
+                            operation: 'X',
+                            index: calcStr.lastIndexOf('X')
+                        },
+                        {
+                            operation: '-',
+                            index: calcStr.lastIndexOf('-')
+                        },
+                        {
+                            operation: '+',
+                            index: calcStr.lastIndexOf('+')
+                        }
+                    ];
+
+                    signIndexes.sort((a, b) => b.index - a.index);
+                    let toSearch = signIndexes[0].index;
+                    if (calcStr.indexOf('.', toSearch) > (-1)) {
+                        ToastAndroid.showWithGravity("You can't input another dot in the number",
+                            ToastAndroid.LONG,
+                            ToastAndroid.BOTTOM);
+                    } else {
+                        this.setState({
+                            calcString: this.state.calcString + bttn
+                        })
+                    }
                 } else {
                     this.setState({
                         calcString: this.state.calcString + bttn
@@ -73,10 +86,6 @@ export default class App extends React.Component {
                     calcString: this.state.calcString + bttn
                 })
             }
-        } else {
-            this.setState({
-                calcString: this.state.calcString + bttn
-            })
         }
     };
 
@@ -118,7 +127,6 @@ export default class App extends React.Component {
             }
 
 
-
             while (tempCalcString.indexOf('/') > 0) {
                 let operation = tempCalcString.match(/-?\d+\.*\d*\/\d+\.*\d*/);
                 let operationIndex = operation[0].indexOf('/');
@@ -141,7 +149,7 @@ export default class App extends React.Component {
                 tempCalcString = finalState;
             }
 
-            while (tempCalcString.indexOf('-', 1) !== (-1) ) {
+            while (tempCalcString.indexOf('-', 1) !== (-1)) {
                 let operation = tempCalcString.match(/-?\d+\.*\d*-\d+\.*\d*/);
                 let operationIndex = operation[0].indexOf('-', 1);
                 let num1 = Number(operation[0].slice(0, operationIndex));
@@ -152,6 +160,11 @@ export default class App extends React.Component {
                 tempCalcString = finalState;
             }
 
+            if (tempCalcString.split(".")[1] !== undefined) {
+                if (tempCalcString.split(".")[1].length > 4) {
+                    tempCalcString = Number(tempCalcString).toFixed(4);
+                }
+            }
             this.setState({
                 calcString: tempCalcString
             })
@@ -159,7 +172,7 @@ export default class App extends React.Component {
     };
 
     changeSign = bttn => {
-        if (this.state.calcString[0] === '-'){
+        if (this.state.calcString[0] === '-') {
             let tempString = this.state.calcString.slice(1, this.state.calcString.length);
             this.setState({
                 calcString: tempString
@@ -171,10 +184,6 @@ export default class App extends React.Component {
         }
     };
 
-    notAddedyet = bttn => {
-        Alert.alert("Functionallity still in development");
-    };
-
     render() {
         return (
             <View style={styles.main}>
@@ -182,34 +191,33 @@ export default class App extends React.Component {
                     <Text style={styles.calcText}>{this.state.calcString}</Text>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="C" func={this.resetCalcString}/>
-                    <Button bttnValue="DEL" func={this.deleteLastSign}/>
-                    <Button bttnValue="()" func={this.notAddedyet}/>
-                    <Button bttnValue="/" func={this.addToCalcString}/>
+                    <Button bttnValue="C" func={this.resetCalcString} special={true} buttonC={true}/>
+                    <Button bttnValue="DEL" func={this.deleteLastSign} special={true}/>
+                    <Button bttnValue="/" func={this.addToCalcString} special={true}/>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="7" func={this.addToCalcString}/>
-                    <Button bttnValue="8" func={this.addToCalcString}/>
-                    <Button bttnValue="9" func={this.addToCalcString}/>
-                    <Button bttnValue="X" func={this.addToCalcString}/>
+                    <Button bttnValue="7" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="8" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="9" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="X" func={this.addToCalcString} special={true}/>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="4" func={this.addToCalcString}/>
-                    <Button bttnValue="5" func={this.addToCalcString}/>
-                    <Button bttnValue="6" func={this.addToCalcString}/>
-                    <Button bttnValue="-" func={this.addToCalcString}/>
+                    <Button bttnValue="4" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="5" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="6" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="-" func={this.addToCalcString} special={true}/>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="1" func={this.addToCalcString}/>
-                    <Button bttnValue="2" func={this.addToCalcString}/>
-                    <Button bttnValue="3" func={this.addToCalcString}/>
-                    <Button bttnValue="+" func={this.addToCalcString}/>
+                    <Button bttnValue="1" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="2" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="3" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="+" func={this.addToCalcString} special={true}/>
                 </View>
                 <View style={styles.buttonRow}>
-                    <Button bttnValue="+/-" func={this.changeSign}/>
-                    <Button bttnValue="0" func={this.addToCalcString}/>
-                    <Button bttnValue="." func={this.addToCalcString}/>
-                    <Button bttnValue="=" func={this.completeOperation}/>
+                    <Button bttnValue="+/-" func={this.changeSign} special={false}/>
+                    <Button bttnValue="0" func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="." func={this.addToCalcString} special={false}/>
+                    <Button bttnValue="=" func={this.completeOperation} special={true}/>
                 </View>
             </View>
         )
@@ -248,8 +256,20 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+    calcButtonC: {
+        backgroundColor: "rgb(30,30,30)",
+        marginLeft: 5,
+        marginRight: 5,
+        flex: 2.1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
     calcButtonText: {
         color: "white",
+        fontSize: 35
+    },
+    calcButtonTextSpec: {
+        color: "rgb(49,198,224)",
         fontSize: 35
     }
 });

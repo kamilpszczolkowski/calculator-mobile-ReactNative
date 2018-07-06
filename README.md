@@ -12,7 +12,9 @@ The purpose of this application was to practice new skills in react-native envir
  
 # description
 
-Application looks like basic phone calculator - for basic operations. 
+Application can do simple calculations on decimal numbers. Basic look is shown on screens below:
+
+![](screens/1.jpg) ![](screens/2.jpg) ![](screens/3.jpg)
 
 # Running the application
 
