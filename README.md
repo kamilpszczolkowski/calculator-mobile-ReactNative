@@ -12,15 +12,19 @@ The purpose of this application was to practice new skills in react-native envir
  
 # description
 
-Application can do simple calculations on decimal numbers. It look is shown on screens below:
+Application can do simple calculations on decimal numbers.
 
-![](screens/1.jpg) ![](screens/2.jpg) ![](screens/3.jpg)
-
-User can input numbers with defined keyboard. Numbers can have decimals - by typing dot symbol. numbers can be
+User can input numbers with defined keyboard. Numbers can have decimals. numbers can be
 separated by mathematics operations: +, -, /, X. User can change the sign of the first number by 
-pressing the +/- button. Input data can be cleared (C), last symbol can be deleted also (DEL).
+pressing the +/- button. 
+
+Input data can be cleared (C), last symbol can be deleted also (DEL).
 To calculate the equation user has to press button with symbol =. The result will appear instead of
 the calculated equation - user can do more calculations with it.
+
+Application look is shonw on screeens below:
+
+![](screens/1.jpg) ![](screens/2.jpg) ![](screens/3.jpg)
 
 ## Implementation
 
