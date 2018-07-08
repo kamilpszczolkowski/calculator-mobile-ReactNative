@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableHighlight, Alert, ToastAndroid} from 'react-native';
+import {StyleSheet, Text, View, TouchableHighlight, ToastAndroid, Platform, AlertIOS} from 'react-native';
 
 class Button extends React.Component {
 
@@ -27,24 +27,28 @@ export default class App extends React.Component {
         }
     }
 
-    addToCalcString = bttn => {
-        let calcStr = this.state.calcString;
-        if (calcStr.length > 45) {
-            ToastAndroid.showWithGravity('Entered operation is too long',
+    showMessage = message => {
+        if (Platform.OS === 'android') {
+            ToastAndroid.showWithGravity(message,
                 ToastAndroid.LONG,
                 ToastAndroid.BOTTOM);
         } else {
+            AlertIOS.alert(message);
+        }
+    };
+
+    addToCalcString = bttn => {
+        let calcStr = this.state.calcString;
+        if (calcStr.length > 45) {
+            this.showMessage('Entered operation is too long');
+        } else {
             if (bttn === '/' || bttn === 'X' || bttn === '-' || bttn === '+' || bttn === '.') {
                 if (calcStr.length === 0) {
-                    ToastAndroid.showWithGravity('You have to input digits first',
-                        ToastAndroid.LONG,
-                        ToastAndroid.BOTTOM);
+                   this.showMessage('You have to input digits first');
                 } else if (calcStr[calcStr.length - 1] === '/' || calcStr[calcStr.length - 1] === 'X' ||
                     calcStr[calcStr.length - 1] === '-' || calcStr[calcStr.length - 1] === '+' ||
                     calcStr[calcStr.length - 1] === '.') {
-                    ToastAndroid.showWithGravity("Doubled operation",
-                        ToastAndroid.LONG,
-                        ToastAndroid.BOTTOM);
+                    this.showMessage('Doubled operation');
                 } else if (bttn === '.') {
                     let signIndexes = [
                         {
@@ -68,9 +72,7 @@ export default class App extends React.Component {
                     signIndexes.sort((a, b) => b.index - a.index);
                     let toSearch = signIndexes[0].index;
                     if (calcStr.indexOf('.', toSearch) > (-1)) {
-                        ToastAndroid.showWithGravity("You can't input another dot in the number",
-                            ToastAndroid.LONG,
-                            ToastAndroid.BOTTOM);
+                        this.showMessage("You can't input another dot in the number");
                     } else {
                         this.setState({
                             calcString: this.state.calcString + bttn
@@ -105,15 +107,11 @@ export default class App extends React.Component {
         let tempCalcString = this.state.calcString;
 
         if (tempCalcString.length === 0) {
-            ToastAndroid.showWithGravity('No operation',
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM);
+            this.showMessage("No operation");
         } else if (tempCalcString[tempCalcString.length - 1] === '/' || tempCalcString[tempCalcString.length - 1] === 'X' ||
             tempCalcString[tempCalcString.length - 1] === '-' || tempCalcString[tempCalcString.length - 1] === '+' ||
             tempCalcString[tempCalcString.length - 1] === '.') {
-            ToastAndroid.showWithGravity("Digits missing",
-                ToastAndroid.LONG,
-                ToastAndroid.BOTTOM);
+            this.showMessage("Digits missing");
         } else {
             while (tempCalcString.indexOf('X') > 0) {
                 let operation = tempCalcString.match(/-?\d+\.*\d*X\d+\.*\d*/);
@@ -167,6 +165,13 @@ export default class App extends React.Component {
             }
             this.setState({
                 calcString: tempCalcString
+            }, () => {
+                if(this.state.calcString === 'Infinity'){
+                    this.showMessage("Divided by 0, result - Infinity");
+                    this.setState({
+                        calcString: ''
+                    })
+                }
             })
         }
     };
